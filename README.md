@@ -4,31 +4,31 @@ Here is all my documentation on React and what I find to be most useful for use,
 
 <span style="font-size: 21px">Table of Contents</span>
 
-- [**<u>Getting Started</u>**](#GettingStarted)
-- **<u>General Rules for React</u>**
-- **<u>React Bootstrap</u>**
-- **<u>Create a Functional Component .JSX</u>**
-- **<u>Importing a Component within another Component</u>**
-- **<u>Including Javascript / Variables in your Component</u>**
-- **<u>Mapping Items from an Array / Multi-Line Javascript</u>**
-  - **<u>Sorting Examples</u>**
-- **<u>Conditional Rendering</u>**
-- **<u>useState</u>**
-  - **<u>useState Variable Updater Example</u>**
-  - **<u>useState Counter Increaser Example</u>**
-  - **<u>useState Boolean Toggler Example</u>**
-- **<u>Props</u>**
-  - **<u>PropTypes</u>**
-  - **<u>Default Props</u>**
-- **<u>onClick Event</u>**
-  - **<u>onClick Event Properties</u>**
-  - **<u>Change Button Text onClick</u>**
-  - **<u>Hide Image onClick</u>**
-- **<u>onChange Event</u>**
-  - **<u>onChange Input Box</u>**
-  - **<u>onChange Textarea</u>**
-  - **<u>onChange Option Box</u>**
-  - **<u>onChange Radio Buttons</u>**
+- [**<u>Getting Started</u>**](#getting-started)
+- [**<u>Basic Rules for React</u>**](#basic-rules-for-react)
+- [**<u>React Bootstrap</u>**](#react-bootstrap)
+- [**<u>Create a Functional Component .JSX</u>**](#create-a-functional-component-jsx)
+- [**<u>Importing a Component within another Component</u>**](#importing-a-component-within-another-component)
+- [**<u>Including Javascript / Variables in your Component</u>**](#including-javascript-in-your-component)
+- [**<u>Mapping Items from an Array / Multi-Line Javascript</u>**](#mapping-items-from-an-array)
+  - [**<u>Sorting Examples</u>**](#sorting-examples)
+- [**<u>Conditional Rendering</u>**](#conditional-rendering)
+- [**<u>useState</u>**](#usestate)
+  - [**<u>useState Variable Updater Example</u>**](#usestate-variable-updater-example)
+  - [**<u>useState Counter Increaser Example</u>**](#usestate-counter-increaser-example)
+  - [**<u>useState Boolean Toggler Example</u>**](#usestate-boolean-toggler-example)
+- [**<u>Props</u>**](#props)
+  - [**<u>PropTypes</u>**](#prop-types)
+  - [**<u>Default Props</u>**](#default-props)
+- [**<u>onClick Event</u>**](#onclick-event)
+  - [**<u>onClick Event Properties</u>**](#onclick-event-properties)
+  - [**<u>Change Button Text onClick</u>**](#change-button-text-onclick)
+  - [**<u>Hide Image onClick</u>**](#hide-image-onclick)
+- [**<u>onChange Event</u>**](#onchange-event)
+  - [**<u>onChange Input Box</u>**](#onchange-input-box)
+  - [**<u>onChange Textarea</u>**](#onchange-textarea)
+  - [**<u>onChange Option Box</u>**](#onchange-option-box)
+  - [**<u>onChange Radio Buttons</u>**](#onchange-radio-buttons)
 
 # Getting Started
 
