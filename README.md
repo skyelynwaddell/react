@@ -44,6 +44,11 @@ it is very in depth and goes over all topics mentioned below.
 - [**<u>useContext</u>**](#usecontext)
 - [**<u>useRef</u>**](#useref)
   - [**<u>useRef on an Element</u>**](#useref-on-an-element)
+- [**<u>NodeJS & React</u>**](#nodejs-&-react)
+  - [**<u>Axios GET Request</u>**](#axios-get-request)
+  - [**<u>Axios POST Request</u>**](#axios-post-request)
+  - [**<u>Fetch GET Request</u>**](#fetch-get-request)
+  - [**<u>Fetch POST Request</u>**](#fetch-post-request)
 
 # Getting Started
 
@@ -1093,7 +1098,6 @@ function MyComponent(){
         document.title = `Count: ${count}`;
     });
     
-    {/*Add Count Function*/}
     function addCount(){
         setCount(_count => _count + 1);
     }
@@ -1124,7 +1128,6 @@ function MyComponent(){
         document.title = `Count: ${count}`;
     }, []);
 
-    {/*Add Count Function*/}
     function addCount(){
         setCount(_count => _count + 1);
     }
@@ -1156,14 +1159,9 @@ function MyComponent(){
     useEffect(() => {
         document.title = `Count: ${count}`;
 
-        //you may also perform some cleanup code with useEffect
-        return() => {
-            //Some cleanup code
-        }
     //you may check for multiple values that change, by seperating the values with commas
     }, [count, color]); 
     
-    {/*Add Count Function*/}
     function addCount(){
         setCount(_count => _count + 1);
     }
@@ -1172,6 +1170,43 @@ function MyComponent(){
         <>
             <h1> Count: {count} </h1>
             <button onClick={addCount}> Add </button>
+        </>
+    );
+}   
+
+export default MyComponent;
+```
+
+# useEffect Cleanup
+
+When using Event Listeners, or Timers with Javascript inside a useEffect hook, it is best idea to clean up those event listeners, and timers or else there will be multiple instantiated every time the component re-renders.
+
+```javascript
+import React, { useState, useEffect } from "react";
+
+function MyComponent(){
+
+    const [width, setWidth] = useState(window.innerWidth);
+    const [height, setHeight] = useState(window.innerHeight);
+
+    useEffect(() => {
+        window.addEventListener("resize", handleResize);
+
+        //perform cleanup on Event Listener
+        return () => {
+           window.removeEventListener("resize", handleResize);
+        }
+    }, []); 
+    
+    function handleResize(){
+        setWidth(window.innerWidth);
+        setHeight(window.innerHeight);
+    }
+
+    return(
+        <>
+            <h1> Width: {width} </h1>
+            <h1> Height: {height} </h1>
         </>
     );
 }   
@@ -1300,4 +1335,194 @@ function MyComponent(){
 }
 
 export default MyComponent;
+```
+
+# NodeJS & React
+
+You will need to install cors on your NodeJS server if your React app is running on a different port / host.
+
+```
+npm install cors
+```
+
+Setup a route in your NodeJS server that will handle the requests.
+
+```javascript
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const port = 8080;
+
+// Enable CORS for all routes
+app.use(cors());
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Sample endpoint to send data
+app.get('/api/data', (req, res) => {
+    const data = { message: 'Hello from the server!' };
+    res.json(data);
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
+```
+
+# Axios GET Request
+
+You can use Axios in you React app to save typing whilst doing GET/POST requests to your server.
+
+In your React app, install the NPM package **Axios**.
+
+```
+npm install axios
+```
+
+Use Axios for a GET request in a React Component
+
+```javascript
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+function App() {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        axios.get('http://localhost:3001/api/data')
+            .then(response => setData(response.data));
+    }, []);
+
+    return (
+        <div className="App">
+            <header className="App-header">
+                <h1>React and Node.js</h1>
+                {data ? <p>{data.message}</p> : <p>Loading...</p>}
+            </header>
+        </div>
+    );
+}
+
+export default App;
+```
+
+# Axios POST Request
+
+Here is how to do a POST Request using **Axios**.
+
+```javascript
+import React, { useState } from 'react';
+import axios from 'axios';
+
+function App() {
+    const [data, setData] = useState('');
+    const [response, setResponse] = useState(null);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const res = await axios.post('http://localhost:3001/api/data', { data });
+            setResponse(res.data);
+        } catch (error) {
+            console.error('Error sending data:', error);
+        }
+    };
+
+    return (
+        <div className="App">
+            <header className="App-header">
+                <h1>React and Node.js</h1>
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        value={data}
+                        onChange={(e) => setData(e.target.value)}
+                        placeholder="Enter some data"
+                    />
+                    <button type="submit">Send Data</button>
+                </form>
+                {response && <p>{response.message}</p>}
+            </header>
+        </div>
+    );
+}
+
+export default App;
+```
+
+# Fetch GET Request
+
+Alternatively to **Axios**, you may use the default **Fetch** method that Javascript supplies, it however does require more typing.
+
+```javascript
+import React, { useEffect, useState } from 'react';
+
+function App() {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/data')
+            .then(response => response.json())
+            .then(data => setData(data));
+    }, []);
+
+    return (
+        <div className="App">
+            <header className="App-header">
+                <h1>React and Node.js</h1>
+                {data ? <p>{data.message}</p> : <p>Loading...</p>}
+            </header>
+        </div>
+    );
+}
+
+export default App;
+```
+
+# Fetch POST Request
+
+Here is the standard **Fetch** method of doing a POST request in React.
+
+```javascript
+import React, { useState } from 'react';
+
+function App() {
+    const [input, setInput] = useState('');
+    const [response, setResponse] = useState(null);
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        fetch('http://localhost:3001/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ data: input }),
+        })
+            .then(response => response.json())
+            .then(data => setResponse(data))
+            .catch(error => console.error('Error posting data:', error));
+    };
+
+    return (
+        <div className="App">
+            <header className="App-header">
+                <h1>React and Node.js</h1>
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Enter some data"
+                    />
+                    <button type="submit">Send Data</button>
+                </form>
+                {response && <p>{response.message}</p>}
+            </header>
+        </div>
+    );
+}
+
+export default App;
 ```
