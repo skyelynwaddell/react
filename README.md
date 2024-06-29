@@ -2,6 +2,10 @@
 
 Here is all my documentation on React and what I find to be most useful for use, and reference.
 
+I recommend checking out this Youtube tutorial by **BroCode**.\
+[**React Full Course for free ⚛️ (2024)**](https://www.youtube.com/watch?v=CgkZ7MvWUAA&t=7751s)\
+it is very in depth and goes over all topics mentioned below.
+
 <span style="font-size: 21px">Table of Contents</span>
 
 - [**<u>Getting Started</u>**](#getting-started)
@@ -17,6 +21,9 @@ Here is all my documentation on React and what I find to be most useful for use,
   - [**<u>useState Variable Updater Example</u>**](#usestate-variable-updater-example)
   - [**<u>useState Counter Increaser Example</u>**](#usestate-counter-increaser-example)
   - [**<u>useState Boolean Toggler Example</u>**](#usestate-boolean-toggler-example)
+  - [**<u>useState Update Objects</u>**](#usestate-update-objects)
+  - [**<u>useState Update Arrays</u>**](#usestate-update-arrays)
+  - [**<u>useState Update Array of Objects</u>**](#usestate-update-array-of-objects)
 - [**<u>Props</u>**](#props)
   - [**<u>PropTypes</u>**](#prop-types)
   - [**<u>Default Props</u>**](#default-props)
@@ -29,6 +36,11 @@ Here is all my documentation on React and what I find to be most useful for use,
   - [**<u>onChange Textarea</u>**](#onchange-textarea)
   - [**<u>onChange Option Box</u>**](#onchange-option-box)
   - [**<u>onChange Radio Buttons</u>**](#onchange-radio-buttons)
+- [**<u>Updater Functions</u>**](#updater-functions)
+- [**<u>useEffect</u>**](#useeffect)
+  - [**<u>useEffect after re-render of a Component</u>**](#useeffect-after-re-render-of-a-component)
+  - [**<u>useEffect when a Component mounts</u>**](#useeffect-when-a-component-mounts)
+  - [**<u>useEffect when value changes</u>**](#useeffect-when-value-changes)
 
 # Getting Started
 
@@ -482,6 +494,154 @@ function App(){
 export default App;
 ```
 
+# useState Update Objects
+
+If you are updating an object with useState, if you just update one value it will replace all the rest of the object's key value pairs. So what you must do is include all the key value pairs that would be required, for example car needs a year, make and model every time it is updated. 
+
+If you would like to keep the other values the same without having to explicitly try and calculate every field, whenever any field has to be updated you can use a spread operator. 
+
+This looks like 3 periods, following the objects name you are trying to update. Below is an example of how you can update an object whilst using useState.
+
+```javascript
+import React, { useState } from "react";
+
+function MyComponent(){
+    const [car, setCar] = useState({
+        year: 2024,
+        make: "Ford",
+        Model: "Mustang"
+    })
+
+    function handleYearChange(event){    
+        setCar(_car => ({ ..._car, year: event.target.value }) );
+    }
+    
+    function handleMakeChange(event){
+        setCar(_car => ({ ..._car, make: event.target.value }) );
+    }
+    
+    function handleModelChange(event){
+        setCar(_car => ({ ..._car, model: event.target.value }) );
+    }
+    
+    return(
+        <>
+            <h1> Your favorite car: {car.year} {car.make} {car.model} </h1>
+            <input type="number" value={car.year} onChange={handleYearChange}>
+            <input type="text" value={car.make} onChange={handleMakeChange}>
+            <input type="text" value={car.model} onChange={handleModelChange}>
+        </>
+    );                       
+}
+
+export default MyComponent;
+```
+
+# useState Update Arrays
+
+You can use the following methods in order to update an array, or delete from a position in the array.\
+Common naming practice for variables that never get used in the code, is name them as an underscore.
+
+```javascript
+import React, { useState } from "react";
+
+function MyComponent(){
+    
+    const [foods, setFoods] = useState(["Apple", "Orange", "Banana"]);
+    
+    function handleAddFood(){
+        const newFood = document.getElementById("foodInput").value;
+        document.getElementById("foodInput").value = "";
+
+        setFoods(_foods => [..._foods, newFood]);
+    }
+    
+    function handleRemoveFood(index){
+        setFoods(_foods => _foods.filter((_, i) => i !== index));
+    }
+
+    return(
+        <>
+            <h1> List of Foods </h1>
+            <ul>
+                {foods.map((food, index) => 
+                <li onClick={ () => handleRemoveFood(index) } 
+                key={index}> {food} 
+                </li> )}
+            </ul>
+            
+            <input type="text" id="foodInput" placeholder="Enter food name...">
+            <button onClick={handleAddFood}> Add Food </button>
+        </>
+    );
+}
+
+export default MyComponent;
+```
+
+# useState Update Array of Objects
+
+```javascript
+import React, { useState } from "react";
+
+function MyComponent(){
+    
+    const [cars, setCars] = useState([]);
+    const [carYear, setCarYear] = useState(new Date().getFullYear());
+    const [carMake, setCarMake] = useState("");
+    const [carModel, setCarModel] = useState("");
+
+    function handleAddCar(){
+        const newCar = {
+            year: carYear,
+            make: carMake,
+            model: carModel,
+        }
+        setCars(_cars => [..._cars, newCar]);
+
+        setCarYear(new Date().getFullYear());
+        setCarMake("");
+        setCarModel("");
+    }
+
+    function handleRemoveCar(index){
+        setCars(_cars => _cars.filter((_, i) => i !== index ));
+    }
+
+    function handleYearChange(){
+        setCarYear(_carYear => event.target.value);
+    }
+
+    function handleMakeChange(){
+        setCarMake(_carMake => event.target.value);
+    }
+
+    function handleModelChange(){
+        setCarModel(_carModel => event.target.value);
+    }
+
+    return(
+        <>
+            <h1> List of Car Objects </h1>
+
+            <ul>
+                {cars.map((car,index) => 
+                    <li key={index} onClick={() => handleRemoveCar(index)}> {car.year} {car.make} {car.model} </li>
+                )}
+            </ul>
+            
+            <input type="number" value={carYear} onChange={handleYearChange}>
+            <input type="text" value={carMake} onChange={handleMakeChange} placeholder="Enter Car Make...">
+            <input type="text" value={carModel} onChange={handleModelChange} placeholder="Enter Car Model">
+        
+            <button id="insertCarButton"> Add New Car </button>
+        </>
+    );
+}
+
+export default MyComponent;
+```
+
 # Props
 
 **Read-Only** properties that are shared between components. A parent component can send data to a child component, with the following method
@@ -811,57 +971,207 @@ import React, { useState } from "react";
 
 function MyComponent(){
     
-    //input text
-    const [name, setName] = useState("No Name");
-    const [age, setAge] = useState(13);
-
-    //textarea
-    const [comment, setComment] = useState("");
-
-    //checkbox
-    const [payment, setPayment] = useState("label");
-
-    //change name onChange of name input field
-    function handleNameChange(event){
-        setName(event.target.value);
+    const [shipping, setShipping] = useState("Delivery");
+    
+    function handleShipping(event){
+        setShipping(event.target.value);
     }
+    
+    return(
+        <>
+            <label>
+                <input type="radio" value="Pick Up"
+                checked={shipping === "Pick Up"}
+                onChange={handleShippingChange}/>
+                Pick Up
+            </label>
 
-    //change age onChange of age input field
-    function handleAgeChange(event){
-        setAge(event.target.value);
+            <label>
+                <input type="radio" value="Delivery"
+                checked={shipping === "Delivery"}
+                onChange={handleShippingChange}/>
+                Delivery
+            </label>
+
+            <h1> Shipping: { shipping } </h1>
+        </>
+    );
+}
+
+export default MyComponent;
+```
+
+# Updater Functions
+
+A function passed as an argument to setState usually.\
+ex. setYear( arrow function );
+
+Allow for safe updates based on the previous state. Used with multiple state updates and async functions. Good practice to use updater functions but is not required.
+
+The below example, calls setCount to increase +1 three times!\
+However, useState, uses the current state of the variable to do calculations so this would still only make count = 1, even though it was called three times.
+
+```javascript
+//WRONG
+function MyComponent() {
+    const [count, setCount] = useState(0);
+
+    function increment(){
+        setCount(count + 1);
+        setCount(count + 1);
+        setCount(count + 1);
+    }    
+}
+
+export default MyComponent;
+```
+
+Instead what you should do is pass the current count into a temporary variable, with an arrow function. This will create a new "temporary" count, do the calculations and set count to the proper amount.\
+All three setCount lines have different common naming conventions for the useState temp variable.
+
+```javascript
+//CORRECT
+function MyComponent(){
+    const [count, setCount] = useState(0);
+
+    function increment(){
+        setCount(prevCount => prevCount + 1);
+        setCount(_count => _count + 1);
+        setCount(c => c + 1);
     }
+}
 
-    //change comment
-    function handleCommentChange(event){
-        setComment(event.target.value);
+export default MyComponent
+```
+
+# useEffect
+
+A React hook that tells React to **DO SOME CODE WHEN....**
+
+- ...This component re-renders.
+- ...This component mounts (when you create & append it to the DOM).
+- ...The state of a value changes.
+
+**useEffect** is usually not really obvious as to what this hook does, a more explicit name would be\
+**useSideCode.**
+
+```
+useEffect(function, [dependencies]);
+```
+
+```
+useEffect(() => {});            //Runs after every re-render
+useEffect(() => {}, []);        //Runs only on mount
+useEffect(() => {}, [value]);   //The state of a value changes
+```
+
+You will often see **useEffect** associated with the following
+
+- Event Listeners
+- DOM manipulation
+- Subscriptions (real-time-updates)
+- Fetching data from an API
+- Clean up when a component unmounts
+
+Here are some example of all 3 types of useEffect you may use when different events happen.
+
+# useEffect after re-render of a Component
+
+```javascript
+import React, { useState, useEffect } from "react";
+
+function MyComponent(){
+
+    const [count, setCount] = useState(0);
+    const [color, setColor] = useState("#FF00FF");
+
+    {/*useEffect after every re-render*/}
+    useEffect(() => {
+        document.title = `Count: ${count}`;
+    });
+    
+    {/*Add Count Function*/}
+    function addCount(){
+        setCount(_count => _count + 1);
     }
 
     return(
         <>
-            {/* INPUT : name field */}
-            <h1> Name: { name } </h1>
-            <input value={ name } onChange={ handleNameChange }/>
-
-            {/* INPUT : age field */}
-            <h1> Age: { age } </h1>
-            <input value={ age } onChange={ handleAgeChange }/>
-
-            {/* TEXTAREA : comment field */}
-            <h1> Comment: { comment } </h1> 
-            <textarea value={ comment } onChange={ handleCommentChange }
-            placeholder="Enter comment..." />
-
-            {/*OPTION MENU : payment type*/}
-            <select value={ payment } onChange={ handlePaymentChange }>
-                <option value="label"> Select an Option </option>
-                <option value="Visa"> Visa </option>
-                <option value="Mastercard"> Mastercard </option>
-                <option value="Giftcard"> Giftcard </option>
-            </select>
-            <h1>Payment Type: { payment }</h1>
+            <h1> Count: {count} </h1>
+            <button onClick={addCount}> Add </button>
         </>
     );
-}
+}   
+
+export default MyComponent;
+```
+
+# useEffect when a Component mounts
+
+```javascript
+import React, { useState, useEffect } from "react";
+
+function MyComponent(){
+
+    const [count, setCount] = useState(0);
+    const [color, setColor] = useState("#FF00FF");
+
+    {/*useEffect only when component mounts*/}
+    useEffect(() => {
+        document.title = `Count: ${count}`;
+    }, []);
+
+    {/*Add Count Function*/}
+    function addCount(){
+        setCount(_count => _count + 1);
+    }
+
+    return(
+        <>
+            <h1> Count: {count} </h1>
+            <button onClick={addCount}> Add </button>
+        </>
+    );
+}   
+
+export default MyComponent;
+```
+
+# useEffect when value changes
+
+```javascript
+import React, { useState, useEffect } from "react";
+
+function MyComponent(){
+
+    const [count, setCount] = useState(0);
+    const [color, setColor] = useState("#FF00FF");
+
+    {/*useEffect only when state of a value changes
+       When this component mounts + this value changes, then do this
+    */}
+    useEffect(() => {
+        document.title = `Count: ${count}`;
+
+        //you may also perform some cleanup code with useEffect
+        return() => {
+            //Some cleanup code
+        }
+    //you may check for multiple values that change, by seperating the values with commas
+    }, [count, color]); 
+    
+    {/*Add Count Function*/}
+    function addCount(){
+        setCount(_count => _count + 1);
+    }
+
+    return(
+        <>
+            <h1> Count: {count} </h1>
+            <button onClick={addCount}> Add </button>
+        </>
+    );
+}   
 
 export default MyComponent;
 ```
