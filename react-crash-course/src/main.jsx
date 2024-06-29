@@ -8,7 +8,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/css/index.css';
 
 //javascript
-import './assets/js/htmx.js';
 import './assets/js/script.js';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

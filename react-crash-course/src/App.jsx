@@ -1,39 +1,23 @@
-import React from 'react'
-
-
+import React, { useState, useEffect } from 'react';
+import axios from "axios";
 const App = () => {
 
-  //declare a variable with state
-  //use state parameter, is the default value of the variable
-  //const [newItem, setNewItem] = useState("");
+    const [data, setData] = useState("");
 
-  return (
-    <>
-    <div className='m-5'>
+    {/* When component loads, do a GET request */}
+    useEffect(() => {
+      axios.get("http://localhost:8081/api/data")
+      .then(res => {
+        setData(res.data.message);
+      })
+      .catch(e => console.error(e))
+    }, [])
 
-    <form className="w-100">
-        <label htmlFor="newitem">New Item</label>
-        <input className='form-control mb-1' id='newitem' type="text" />
-        <button className='btn btn-primary'>Add</button>
-    </form>
+    return (
+        <>
+           <h1> {data ? data : "Loading..."} </h1>
+        </>
+    );
+};
 
-    <h1>Todo List</h1>
-    <ul className='list'>
-      <li>
-        <label htmlFor="">
-          <input type="checkbox" name="" id="" />
-          Item 1
-        </label>
-        <h1></h1>
-        <button className="btn btn-danger">Delete</button>
-      </li>
-    </ul>
-
-    </div>
-    </>
-
-  )
-}
-
-export default App
-
+export default App;

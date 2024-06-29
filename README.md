@@ -45,10 +45,9 @@ it is very in depth and goes over all topics mentioned below.
 - [**<u>useRef</u>**](#useref)
   - [**<u>useRef on an Element</u>**](#useref-on-an-element)
 - [**<u>NodeJS & React</u>**](#nodejs-&-react)
-  - [**<u>Axios GET Request</u>**](#axios-get-request)
-  - [**<u>Axios POST Request</u>**](#axios-post-request)
-  - [**<u>Fetch GET Request</u>**](#fetch-get-request)
-  - [**<u>Fetch POST Request</u>**](#fetch-post-request)
+- [**<u>Axios</u>**](#axios)
+  - [**<u>GET Request</u>**](#get-request)
+  - [**<u>POST Request</u>**](#post-request)
 
 # Getting Started
 
@@ -1339,19 +1338,25 @@ export default MyComponent;
 
 # NodeJS & React
 
-You will need to install cors on your NodeJS server if your React app is running on a different port / host.
+You will need to install **cors** on your **NodeJS** server if your **React** app is running on a different port / host. Create a new **/server** folder outside of your **React** app and create a **server.js** file in there.
+
+Run the following commands in the root of your /server directory.
+
+```javascript
+npm init //select server.js as your entrypoint during setup
+```
 
 ```
-npm install cors
+npm install express cors
 ```
 
-Setup a route in your NodeJS server that will handle the requests.
+Setup a route in your **NodeJS** server that will handle the requests.
 
 ```javascript
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 8080;
+const port = 8081;
 
 // Enable CORS for all routes
 app.use(cors());
@@ -1359,10 +1364,18 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Sample endpoint to send data
+// Sample endpoint to handle GET requests
 app.get('/api/data', (req, res) => {
-    const data = { message: 'Hello from the server!' };
-    res.json(data);
+    const receivedData = req.body;
+    console.log(receivedData); // This should log the received data
+    res.json({ message: 'Data received successfully', data: receivedData });
+});
+
+// Sample endpoint to handle POST requests
+app.post('/api/data', (req, res) => {
+    const receivedData = req.body;
+    console.log(receivedData); // This should log the received data
+    res.json({ message: 'Data received successfully', data: receivedData });
 });
 
 app.listen(port, () => {
@@ -1370,159 +1383,74 @@ app.listen(port, () => {
 });
 ```
 
-# Axios GET Request
+# Axios
 
-You can use Axios in you React app to save typing whilst doing GET/POST requests to your server.
+You can use **Axios** in you **React** app to do GET/POST requests to your server. **Axios** handles some thing's so that your server and **react** app can communicate even though they are different apps.
 
-In your React app, install the NPM package **Axios**.
+First, in your **React** app, install the NPM package **Axios**.
 
 ```
 npm install axios
 ```
 
-Use Axios for a GET request in a React Component
+# GET Request
+
+Use **Axios** for a GET request in a **React Component**
 
 ```javascript
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import axios from "axios";
 
-function App() {
-    const [data, setData] = useState(null);
+const App = () => {
 
+    const [data, setData] = useState("");
+
+    {/* When component loads, do a GET request */}
     useEffect(() => {
-        axios.get('http://localhost:3001/api/data')
-            .then(response => setData(response.data));
-    }, []);
+      axios.get("http://localhost:8081/api/data")
+      .then(res => {
+        setData(res.data.message);
+      })
+      .catch(e => console.error(e))
+    }, [])
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <h1>React and Node.js</h1>
-                {data ? <p>{data.message}</p> : <p>Loading...</p>}
-            </header>
-        </div>
+        <>
+           <h1> {data ? data : "Loading..."} </h1>
+        </>
     );
-}
+};
 
 export default App;
 ```
 
-# Axios POST Request
+# POST Request
 
-Here is how to do a POST Request using **Axios**.
+Here is how to do a POST Request using the **Axios** NPM Pacakage.
 
 ```javascript
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from "axios";
 
-function App() {
-    const [data, setData] = useState('');
-    const [response, setResponse] = useState(null);
+const App = () => {
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const res = await axios.post('http://localhost:3001/api/data', { data });
-            setResponse(res.data);
-        } catch (error) {
-            console.error('Error sending data:', error);
-        }
-    };
+    const [data, setData] = useState("");
+    
+    function postRequest(){
+      axios.post("http://localhost:8081/api/data")
+      .then(res => {
+        setData(res.data.message);
+      })
+      .catch(e => console.error(e));
+    }
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <h1>React and Node.js</h1>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        value={data}
-                        onChange={(e) => setData(e.target.value)}
-                        placeholder="Enter some data"
-                    />
-                    <button type="submit">Send Data</button>
-                </form>
-                {response && <p>{response.message}</p>}
-            </header>
-        </div>
+        <>
+           <h1> {data ? data : "Loading..."} </h1>
+           <button onClick={postRequest}> Post Request </button>
+        </>
     );
-}
-
-export default App;
-```
-
-# Fetch GET Request
-
-Alternatively to **Axios**, you may use the default **Fetch** method that Javascript supplies, it however does require more typing.
-
-```javascript
-import React, { useEffect, useState } from 'react';
-
-function App() {
-    const [data, setData] = useState(null);
-
-    useEffect(() => {
-        fetch('http://localhost:3001/api/data')
-            .then(response => response.json())
-            .then(data => setData(data));
-    }, []);
-
-    return (
-        <div className="App">
-            <header className="App-header">
-                <h1>React and Node.js</h1>
-                {data ? <p>{data.message}</p> : <p>Loading...</p>}
-            </header>
-        </div>
-    );
-}
-
-export default App;
-```
-
-# Fetch POST Request
-
-Here is the standard **Fetch** method of doing a POST request in React.
-
-```javascript
-import React, { useState } from 'react';
-
-function App() {
-    const [input, setInput] = useState('');
-    const [response, setResponse] = useState(null);
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        fetch('http://localhost:3001/api/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ data: input }),
-        })
-            .then(response => response.json())
-            .then(data => setResponse(data))
-            .catch(error => console.error('Error posting data:', error));
-    };
-
-    return (
-        <div className="App">
-            <header className="App-header">
-                <h1>React and Node.js</h1>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Enter some data"
-                    />
-                    <button type="submit">Send Data</button>
-                </form>
-                {response && <p>{response.message}</p>}
-            </header>
-        </div>
-    );
-}
+};
 
 export default App;
 ```
