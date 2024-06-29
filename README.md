@@ -41,6 +41,9 @@ it is very in depth and goes over all topics mentioned below.
   - [**<u>useEffect after re-render of a Component</u>**](#useeffect-after-re-render-of-a-component)
   - [**<u>useEffect when a Component mounts</u>**](#useeffect-when-a-component-mounts)
   - [**<u>useEffect when value changes</u>**](#useeffect-when-value-changes)
+- [**<u>useContext</u>**](#usecontext)
+- [**<u>useRef</u>**](#useref)
+  - [**<u>useRef on an Element</u>**](#useref-on-an-element)
 
 # Getting Started
 
@@ -1172,6 +1175,129 @@ function MyComponent(){
         </>
     );
 }   
+
+export default MyComponent;
+```
+
+# useContext
+
+A React hook that allows you to share values between multiple levels of components without passing props through each level.
+
+There must be a "Provider" Component which passes the data it's child Components. 
+
+First create a state variable, then export the const with **createContext()**. After that you must wrap you child component that receives this data, within the context.Provider element, as shown below.
+
+- **Component A \[Provider Component\]**
+
+```javascript
+import React, { useState, useContext } from "react";
+import ComponentB from "./ComponentB.jsx";
+
+export const UserContext = createContext();
+
+function ComponentA(){
+    
+    const [user, setUser] = useState("Guest");
+    
+    return(
+        <>
+            <h1> Component A </h1>
+            
+            <UserContent.Provider value={user}>
+            <ComponentB/>
+            <UserContext.Provider/>
+        </>
+    );
+}
+
+export default ComponentA;
+```
+
+- **ComponentB \[Consumer Component\]**
+
+```javascript
+import React, { useState, useContext } from "react";
+
+import { UserContext } from "./ComponentA.jsx";
+
+function ComponentB(){
+
+    const user = useContext(UserContext);
+
+    return(
+        <h1> Component B </h1>
+        <h1> { `Bye ${user}` } </h1>
+    );
+}
+
+export default ComponentB;
+```
+
+# useRef
+
+useRef and useState are very similar, however...\
+When you call your setter method with useState, it re-renders the component when the state value changes but useRef does not re-renders upon value changes.
+
+useRef is useful for when you want a Component to "remember" some data, but you don't want that data to trigger new renders.
+
+When we click the button below, the ref count increases, however the component and button do not re-render.
+
+**useRef()** function return an object with 1 property of "current"
+
+Example use cases:
+
+- Accessing/Interacting with DOM elements
+- Handling focus, animations, and transitions
+- Managing Timers and Intervals
+
+```javascript
+import React, { useState, useRef } from "react";
+
+function MyComponent(){
+
+    const ref = useRef(0);
+
+    function handleClick(){
+        ref.current++;
+    }    
+
+    return(
+        <>
+            <button onClick={handleClick}>
+                Click Me!
+            </button>
+        </>
+    );
+}
+
+export default MyComponent;
+```
+
+# useRef on an Element
+
+You can use useRef for an element such an an input element, and give its reference to be changed. This is very similar in native Javascript to using a query selector, or getElementById selector and modifying the element's properties.
+
+```javascript
+import React, { useState, useRef } from "react";
+
+function MyComponent(){
+
+    const inputRef = useRef(null);
+
+    function handleClick(){
+        inputRef.current.focus();
+    }    
+
+    return(
+        <>
+            <button onClick={handleClick}>
+                Click Me!
+            </button>
+
+            <input ref={inputRef}>
+        </>
+    );
+}
 
 export default MyComponent;
 ```
